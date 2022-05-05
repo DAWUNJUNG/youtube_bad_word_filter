@@ -20,8 +20,11 @@ services:
           - app
 
   mysql-db:
-    image: mysql:5.7
-    container_name: mysql-db
+    image: library/mysql:5.7
+    container_name: mysql
+    restart: always
+    ports:
+      - 39087:3306
     volumes:
       - ./run/var:/var/lib/mysql
     environment:
@@ -33,6 +36,7 @@ services:
       backend:
         aliases:
           - mysql-db
+    platform: linux/x86_64
 
 networks:
   backend:
