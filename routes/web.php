@@ -12,3 +12,4 @@
 */
 
 Route::get('/', 'YoutubeApiController@index')->name('index');
+Route::get('/test', 'YoutubeApiController@test')->name('test');
