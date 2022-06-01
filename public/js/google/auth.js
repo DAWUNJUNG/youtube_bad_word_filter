@@ -1,8 +1,8 @@
-// The client ID is obtained from the Google API Console
-// at https://console.developers.google.com/.
+// The client ID is obtained from the {{ Google Cloud Console }}
+// at {{ https://cloud.google.com/console }}.
 // If you run this code from a server other than http://localhost,
 // you need to register your own client ID.
-var OAUTH2_CLIENT_ID = '849170902104-5ta35iu81c0j3j4u3n56dio7fdv5ncum.apps.googleusercontent.com';
+var OAUTH2_CLIENT_ID = '3147257063-aukh6rntabnh969v4k35lc9ni2bt31fc.apps.googleusercontent.com';
 var OAUTH2_SCOPES = [
     'https://www.googleapis.com/auth/youtube'
 ];
@@ -56,3 +56,13 @@ function loadAPIClientInterfaces() {
         handleAPILoaded();
     });
 }
+
+$(function(){
+    $('#login-link').click(function() {
+        gapi.auth.authorize({
+            client_id: OAUTH2_CLIENT_ID,
+            scope: OAUTH2_SCOPES,
+            immediate: false
+        }, handleAuthResult);
+    });
+});

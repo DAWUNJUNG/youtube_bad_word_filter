@@ -11,5 +11,5 @@
 |
 */
 
-Route::get('/', 'YoutubeApiController@index')->name('index');
-Route::get('/test', 'YoutubeApiController@test')->name('test');
+Route::get('/', 'YoutubeApiController@index')->name('list');
+Route::get('/video', 'YoutubeApiController@video')->name('video');
