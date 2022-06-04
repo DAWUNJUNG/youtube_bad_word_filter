@@ -10,7 +10,7 @@ class YoutubeApiController extends Controller
     private $google_code = "";
     private $google_client_id = "265179945476-fv3911amlmkucfcoo8qqarbd6hqu92v7.apps.googleusercontent.com";
     private $google_client_secret = "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";
-    private $channel_id = "UCCjJV_nxuPQ_fWGkAkA46fA";
+    private $channel_id = "UC1B6SalAoiJD7eHfMUA9QrA";
     private $api_key = "AIzaSyDFCrkSYI1d0bu_crpX_cJUnadUqEBtEuU";
 
     public function index(Request $request)
