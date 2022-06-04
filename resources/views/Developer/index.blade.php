@@ -1,7 +1,6 @@
 <html>
 <head>
     <title>유튜브 댓글 필터링</title>
-
     {{--    css    --}}
     {{-- bootstrap --}}
     <link href="{{ asset('css/bootstrap/bootstrap.min.css') }}" rel="stylesheet" type="text/css">

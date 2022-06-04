@@ -1,4 +1,4 @@
-<?php if(empty($video_id)) {header('Location: /'); exit();} ?>
+<?php if(empty($video_id) || (empty($video_id) && !isset($token))) {header('Location: /'); exit();} ?>
 <html>
 <head>
     <title>유튜브 댓글 필터링</title>
@@ -21,13 +21,16 @@
     <div id="comment_btn_list" style="text-align: right; padding-bottom: 14px;">
         <button type="button" id="update_btn" class="btn btn-outline-success">수정</button>
     </div>
-    <table id="{{$video_id}}_comment" class="table table-bordered">
+    <table class="table table-bordered">
         <tr>
             <th></th>
             <th>댓글 ID</th>
             <th>닉네임</th>
             <th style="width:50%;">댓글 내용</th>
         </tr>
+        <tbody id="{{$video_id}}_comment">
+
+        </tbody>
     </table>
 </div>
 </body>
@@ -95,20 +98,13 @@
     });
         },
         complete : function(data) {},
-        error : function(xhr, status, error) {}
+        error : function(xhr, status, error) {
+            $("#google_login").click();
+        }
     });
 </script>
 @else
     <script>
-        $(document).ready(function(){
-            $("#google_login").on("click",function(){
-                window.open("https://accounts.google.com/o/oauth2/v2/auth?" +
-                    "redirect_uri=http://localhost:8000/video&" +
-                    "response_type=code&client_id={{$google_client_id}}&" +
-                    "scope=https://www.googleapis.com/auth/youtube&access_type=offline");
-            });
-        });
-
         $.ajax({
             type : "GET",
             dataType : "json",
@@ -155,21 +151,61 @@
 @endif
 <script>
     $(document).ready(function(){
+        $("#google_login").on("click",function(){
+            window.open("https://accounts.google.com/o/oauth2/v2/auth?" +
+                "redirect_uri=http://localhost:8000/video?video_id=-8vCDXmyqYY&" +
+                "response_type=code&client_id={{$google_client_id}}&" +
+                "scope=https://www.googleapis.com/auth/youtube&access_type=offline");
+        });
+
         $("#update_btn").on("click",function(){
-            var delete_comment_arr = [];
-            $("input[name=del_comment_check]:checked").each(function(i){
-                delete_comment_arr.push(comment_arr[$(this).val()]);
-            });
+            var delete_comment_datas = [];
+            var delete_comment_ids = [];
             if($("input[name=del_comment_check]:checked").length < 1) return false;
-            console.log(delete_comment_arr);
+            $("input[name=del_comment_check]:checked").each(function(i){
+                delete_comment_datas.push(comment_arr[$(this).val()]);
+                delete_comment_ids.push($(this).val());
+            });
             $.ajax({
                 type : "PUT",
-                data : JSON.stringify(delete_comment_arr),
+                data : JSON.stringify(delete_comment_datas),
                 dataType : "json",
                 url : "/api/comment_update",
                 success : function(data) {
-                    console.log(data);
-                    if(data.result === false) alert("오류가 발생하였습니다.");
+                    if(data.result === false) {
+                        alert("오류가 발생하였습니다.");
+                    } else {
+                        $.ajax({
+                            type : "GET",
+                            dataType : "json",
+                            url : "https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&key={{$api_key}}"+
+                                "&videoId=-8vCDXmyqYY&maxResults=20",
+                            success : function(data) {
+                                $('#{{$video_id}}_comment').empty();
+                                data.items.forEach(function (element, index) {
+                                    if(!delete_comment_ids.includes(element.id)){
+                                        comment_arr[element.id]={
+                                            'c_video_id': '{{$video_id}}',
+                                            'c_comment_id': element.id,
+                                            'c_comment_usernick': element.snippet.topLevelComment.snippet.authorDisplayName,
+                                            'c_comment': element.snippet.topLevelComment.snippet.textOriginal,
+                                            'c_comment_published_at': element.snippet.topLevelComment.snippet.publishedAt,
+                                            'c_comment_updated_at': element.snippet.topLevelComment.snippet.updatedAt
+                                        };
+                                        $('#{{$video_id}}_comment').append(
+                                            '<tr>' +
+                                            '<td><input type="checkbox" name="del_comment_check" value="'+element.id+'"></td>' +
+                                            '<td>'+element.id+'</td>' +
+                                            '<td>'+element.snippet.topLevelComment.snippet.authorDisplayName+'</td>' +
+                                            '<td>'+element.snippet.topLevelComment.snippet.textOriginal+'</td>' +
+                                            '</tr>');
+                                    }
+                                });
+                            },
+                            complete : function(data) {},
+                            error : function(xhr, status, error) {}
+                        });
+                    }
                 },
                 complete : function(data) {},
                 error : function(xhr, status, error) {}
