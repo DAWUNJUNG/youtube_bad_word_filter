@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class YoutubeApiController extends Controller
 {
@@ -69,5 +70,36 @@ class YoutubeApiController extends Controller
             'google_client_id' => $this->google_client_id,
             'video_id' => (empty($video_id)) ? "" : $video_id
         ]);
+    }
+
+    public function comment_update(Request $request){
+        try {
+            $delete_datas = json_decode($request->getContent(), true);
+
+            foreach ($delete_datas as $index => $data) {
+                DB::table('comment')->updateOrInsert([
+                    'c_video_id' => $data['c_video_id'],
+                    'c_comment_id' => $data['c_comment_id'],
+                    'c_comment_usernick' => $data['c_comment_usernick'],
+                    'c_comment' => $data['c_comment'],
+                    'c_comment_published_at' => $data['c_comment_published_at'],
+                    'c_comment_updated_at' => $data['c_comment_updated_at']
+                ]);
+            }
+
+            return response()->json([
+                'result' => true
+            ]);
+        } catch (\SQLiteException $e) {
+            return response()->json([
+                'result' => false,
+                'message' => $e
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'result' => false,
+                'message' => $e
+            ]);
+        }
     }
 }
