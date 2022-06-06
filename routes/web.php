@@ -13,3 +13,6 @@
 
 Route::get('/', 'YoutubeApiController@index')->name('list');
 Route::get('/video', 'YoutubeApiController@video')->name('video');
+Route::get('/comment', 'YoutubeApiController@comment')->name('comment');
+Route::get('/comment/setting', 'YoutubeApiController@comment_setting')->name('comment_setting');
+Route::get('/download', 'YoutubeApiController@download')->name('download');

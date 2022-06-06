@@ -16,6 +16,7 @@
 </head>
 <body>
 @include("header")
+<h3 style="text-align: center;">영상 댓글 확인</h3>
 <div id="{{$video_id}}" style="margin: 30px 30px;">
     <p align="middle"></p>
     <div id="comment_btn_list" style="text-align: right; padding-bottom: 14px;">
@@ -71,21 +72,24 @@
                         "&videoId=-8vCDXmyqYY&maxResults=20",
                     success : function(data) {
                         data.items.forEach(function (element, index) {
-                            comment_arr[element.id]={
-                                'c_video_id': '{{$video_id}}',
-                                'c_comment_id': element.id,
-                                'c_comment_usernick': element.snippet.topLevelComment.snippet.authorDisplayName,
-                                'c_comment': element.snippet.topLevelComment.snippet.textOriginal,
-                                'c_comment_published_at': element.snippet.topLevelComment.snippet.publishedAt,
-                                'c_comment_updated_at': element.snippet.topLevelComment.snippet.updatedAt
-                            };
-                            $('#{{$video_id}}_comment').append(
-                                '<tr>' +
-                                '<td><input type="checkbox" name="del_comment_check" value="'+element.id+'"></td>' +
-                                '<td>'+element.id+'</td>' +
-                                '<td>'+element.snippet.topLevelComment.snippet.authorDisplayName+'</td>' +
-                                '<td>'+element.snippet.topLevelComment.snippet.textOriginal+'</td>' +
-                                '</tr>');
+                            var del_comment_list = @json($del_comment);
+                            if(!del_comment_list.includes(element.id)) {
+                                comment_arr[element.id] = {
+                                    'c_video_id': '{{$video_id}}',
+                                    'c_comment_id': element.id,
+                                    'c_comment_usernick': element.snippet.topLevelComment.snippet.authorDisplayName,
+                                    'c_comment': element.snippet.topLevelComment.snippet.textOriginal,
+                                    'c_comment_published_at': element.snippet.topLevelComment.snippet.publishedAt,
+                                    'c_comment_updated_at': element.snippet.topLevelComment.snippet.updatedAt
+                                };
+                                $('#{{$video_id}}_comment').append(
+                                    '<tr>' +
+                                    '<td><input type="checkbox" name="del_comment_check" value="' + element.id + '"></td>' +
+                                    '<td>' + element.id + '</td>' +
+                                    '<td>' + element.snippet.topLevelComment.snippet.authorDisplayName + '</td>' +
+                                    '<td>' + element.snippet.topLevelComment.snippet.textOriginal + '</td>' +
+                                    '</tr>');
+                            }
                         });
                     },
                     complete : function(data) {},
@@ -120,7 +124,7 @@
                     type : "GET",
                     dataType : "json",
                     url : "https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&key={{$api_key}}"+
-                        "&videoId=-8vCDXmyqYY&maxResults=20",
+                        "&videoId={{$video_id}}&maxResults=20",
                     success : function(data) {
                         data.items.forEach(function (element, index) {
                             comment_arr[element.id]={
@@ -175,15 +179,16 @@
                     if(data.result === false) {
                         alert("오류가 발생하였습니다.");
                     } else {
+                        var del_comment_list = data.del_comment;
                         $.ajax({
                             type : "GET",
                             dataType : "json",
                             url : "https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&key={{$api_key}}"+
-                                "&videoId=-8vCDXmyqYY&maxResults=20",
+                                "&videoId={{$video_id}}&maxResults=20",
                             success : function(data) {
                                 $('#{{$video_id}}_comment').empty();
                                 data.items.forEach(function (element, index) {
-                                    if(!delete_comment_ids.includes(element.id)){
+                                    if(!del_comment_list.includes(element.id)){
                                         comment_arr[element.id]={
                                             'c_video_id': '{{$video_id}}',
                                             'c_comment_id': element.id,
