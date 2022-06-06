@@ -36,7 +36,7 @@
             type : "GET",
             dataType : "json",
             url : "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={{$channel_id}}"+
-                "&maxResults=4&order=date&type=video&maxResults=1&key={{$api_key}}",
+                "&maxResults=4&order=date&type=video&maxResults=100&key={{$api_key}}",
             success : function(data) {
                 $('body').append('<div id="{{$channel_id}}" class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-5" style="margin: 30px 30px;"></div>');
                 var counting = 0;

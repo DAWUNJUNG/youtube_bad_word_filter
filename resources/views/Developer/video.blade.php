@@ -57,7 +57,7 @@
         type : "GET",
         dataType : "json",
         url : "https://www.googleapis.com/youtube/v3/search?part=id&channelId="+data.items[0].id+
-            "&maxResults=4&order=date&type=video&key={{$api_key}}",
+            "&maxResults=100&order=date&type=video&key={{$api_key}}",
         success : function(data) {
             data.items.forEach(function (element, index) {
                 $('#{{$video_id}} p').append(
@@ -69,7 +69,7 @@
                     type : "GET",
                     dataType : "json",
                     url : "https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&key={{$api_key}}"+
-                        "&videoId=-8vCDXmyqYY&maxResults=20",
+                        "&videoId=-8vCDXmyqYY&maxResults=100",
                     success : function(data) {
                         data.items.forEach(function (element, index) {
                             var del_comment_list = @json($del_comment);
@@ -113,7 +113,7 @@
             type : "GET",
             dataType : "json",
             url : "https://www.googleapis.com/youtube/v3/search?part=id&channelId={{$channel_id}}"+
-                "&maxResults=4&order=date&type=video&key={{$api_key}}",
+                "&maxResults=100&order=date&type=video&key={{$api_key}}",
             success : function(data) {
                 $('#{{$video_id}} p').append(
                     '<iframe width="560" height="315" src="https://www.youtube.com/embed/{{$video_id}}"' +
@@ -124,7 +124,7 @@
                     type : "GET",
                     dataType : "json",
                     url : "https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&key={{$api_key}}"+
-                        "&videoId={{$video_id}}&maxResults=20",
+                        "&videoId={{$video_id}}&maxResults=100",
                     success : function(data) {
                         data.items.forEach(function (element, index) {
                             comment_arr[element.id]={
@@ -184,7 +184,7 @@
                             type : "GET",
                             dataType : "json",
                             url : "https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&key={{$api_key}}"+
-                                "&videoId={{$video_id}}&maxResults=20",
+                                "&videoId={{$video_id}}&maxResults=100",
                             success : function(data) {
                                 $('#{{$video_id}}_comment').empty();
                                 data.items.forEach(function (element, index) {
