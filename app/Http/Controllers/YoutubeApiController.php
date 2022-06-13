@@ -33,7 +33,7 @@ class YoutubeApiController extends Controller
         $video_id = $request->input('video_id');
 
         $del_comment_list = [];
-        $del_datas = DB::table('comment')->where('c_video_id','=',$video_id)->select('c_comment_id')->get();
+        $del_datas = DB::table('comment')->where('c_video_id','=',(empty($video_id)) ? "-8vCDXmyqYY" : $video_id)->select('c_comment_id')->get();
 
         foreach($del_datas as $index => $val){
             array_push($del_comment_list, $val->c_comment_id);
